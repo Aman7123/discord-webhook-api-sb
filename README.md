@@ -15,6 +15,14 @@ uses an integration response information like Message ID is available which allo
 ### Documentation
 * For endpoint examples see the OpenAPI Spec here: `https://app.swaggerhub.com/apis/bananaz-tech-2/discord-webhook-api/1.0.0`
 
+**Important Headers for Requests**
+| Header | Example | Description |
+|---|---|---|
+| Authorization | Authorization:Bot xxx.xxx.xxx | Read https://discord.com/developers/docs/reference#authentication and follow the Discord Bot flow |
+| Server-Id | 885271699333976084 | Enable developer mode in setting which allows right-click->copy id button on the desktop app |
+| Channel-Id | 984610686636265504 | Enable developer mode in setting which allows right-click->copy id button on the desktop app |
+
+
 ### Getting Started
 **Running Locally using IDE**
 This project uses Spring profiles, and corresponding application properties .yaml files.
