@@ -1,0 +1,24 @@
+debug: true
+---
+app:
+  version: @project.version@
+---
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path: /api
+spring:
+  banner:
+    # Custom Banner
+    location: classpath:banner.txt
+---
+# Health check actuator
+management:
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: "*"

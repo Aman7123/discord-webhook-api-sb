@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  discord-webhook-api-sb:
+    container_name: discord-webhook-api-sb-prod
+    image: bananaztech/discord-webhook-api-sb:latest
+    restart: always
+    environment:
+      SERVER_PORT: 8080
+    ports:
+      - "8091:8080"
+      - "8007:9000"
+
+networks:
+  default:
+    external:
+      name: frontend
