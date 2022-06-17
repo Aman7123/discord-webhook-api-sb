@@ -1,0 +1,219 @@
+openapi: 3.0.0
+servers:
+  - description: EXAMPLE ONLY
+    url: http://example.com/webhook-sys-api
+info:
+  description: A Discord bot for mimicking the behavior of a Discord Webhook
+  version: "1.0.0"
+  title: discord-webhook-sys-api
+paths:
+  /webhooks:
+    post:
+      summary: Builds and sends a new Discord message
+      description: |
+        This operation builds a Discord message complete with Embed support and sends it to the Discord server.
+        Notice the addition of a replyTo field in the request body. 
+        You will also find a new message's ID in the response header.
+      responses:
+        '201':
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+            Discord-Message-Id:
+              $ref: '#/components/headers/discordMessageId'
+            Discord-Name:
+              $ref: '#/components/headers/discordName'
+            Discord-Description:
+              $ref: '#/components/headers/discordDescription'
+            Discord-Public-Bot:
+              $ref: '#/components/headers/discordPublicBot'
+            Discord-Owner-Id:
+              $ref: '#/components/headers/discordOwnerId'
+            Discord-Owner-Name:
+              $ref: '#/components/headers/discordOwnerName'
+            Discord-Owner-Discriminator:
+              $ref: '#/components/headers/discordOwnerDiscriminator'
+          description: |
+            The message was successfully sent to the Discord server.
+            Check the headers for additional information about the message.
+        '400':
+          description: |
+            This response can be thrown for many reasons.
+            This bot was designed with detailed responses, check your headers and the JSON body.
+        '401':
+          description: |
+            In this occasion please do check the request Authorization header.
+            Format is the same as Discord Bot flow from https://discord.com/developers/docs/reference#authentication
+        '500':
+          description: |
+            Two reasons:
+            Fatal error while starting embeded Discord bot, do try again!
+            Fatal formatting error while building response.
+            In both occasions reach out to the developer.
+      requestBody:
+        description: The Discord message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhookItem'
+      parameters:
+        - $ref: '#/components/parameters/authorization'
+        - $ref: '#/components/parameters/serverId'
+        - $ref: '#/components/parameters/channelId'
+components:
+  schemas:
+    webhookItem:
+      type: object
+      properties:
+        content:
+          type: string
+          description: The message content
+        embeds:
+          type: array
+          description: The message embeds
+          items:
+            $ref: '#/components/schemas/embedItem'
+        replyTo:
+          type: string
+          description: The message ID to reply to
+    embedItem:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The embed title
+        description:
+          type: string
+          description: The embed description
+        timestamp:
+          oneOf:
+            - $ref: '#/components/schemas/timestampString'
+            - $ref: '#/components/schemas/timestampInt'
+        currentTimestamp:
+          type: boolean
+          default: false
+          description: |
+            If true, the timestamp will be set to the current time.
+        color:
+          type: integer
+          description: The embed color, must be a color ID!
+        footer:
+          description: The embed footer
+          allOf:
+            - $ref: '#/components/schemas/embedFooter'
+        image:
+          type: string
+          description: A URL to the main image part of an embed
+        thumbnail:
+          type: string
+          description: A URL to the smaller upper right hand image of an embed
+        author:
+          description: The embed author
+          allOf:
+            - $ref: '#/components/schemas/embedAuthor'
+        fields:
+          type: array
+          description: The embed fields
+          items:
+            $ref: '#/components/schemas/embedField'
+    embedFooter:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The footer text
+        iconUrl:
+          type: string
+          description: A URL to the small image on the left side of the footer.
+    embedAuthor:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The author name
+        url:
+          type: string
+          description: A URL to the author's page
+        iconUrl:
+          type: string
+          description: A URL to the author's icon
+    embedField:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The field name
+        value:
+          type: string
+          description: The field value
+        inline:
+          type: boolean
+          default: false
+          description: |
+            If true, the field will be displayed inline, ust be true for all that are to reside in a single row!
+    timestampString:
+      type: string
+      description: |
+        The timestamp string.
+        Format in like 2020-01-01T00:00:00.000Z
+      example: "2020-01-01T00:00:00.000Z"
+    timestampInt:
+      type: number
+      description: |
+        The timestamp int.
+        Format in like 1577836800
+      example: 1577836800
+  parameters:
+    authorization:
+      name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        The Discord Bot token.
+        Format is the same as Discord Bot flow from https://discord.com/developers/docs/reference#authentication
+    serverId:
+      name: serverId
+      in: header
+      schema:
+        type: string
+      description: The Discord server ID
+    channelId:
+      name: channelId
+      in: header
+      schema:
+        type: string
+      description: The Discord channel ID
+  headers:
+    discordMessageId:
+      schema:
+        type: string
+      description: The ID of the newly created message
+    location:
+      schema:
+        type: string
+      description: The location of the newly created message, a Discord URL
+    discordName:
+      schema:
+        type: string
+      description: The name of bot used to post the message, as registered in Discord
+    discordDescription:
+      schema:
+        type: string
+      description: The description of bot used to post the message, as registered in Discord
+    discordPublicBot:
+      schema:
+        type: string
+      description: If the bot used to post the message is public or not
+    discordOwnerId:
+      schema:
+        type: string
+      description: The ID of the bot owner, as registered in Discord
+    discordOwnerName:
+      schema:
+        type: string
+      description: The name of the bot owner, as they're registered in Discord
+    discordOwnerDiscriminator:
+      schema:
+        type: string
+      description: The discriminator of the bot owner, as displayed in Discord
